@@ -1,0 +1,67 @@
+versiyon 1
+
+-create db
+-users_table- userid,username,password
+-Xposts_table- add title,summary, content, published_on,updated_on
+FONKSIYONLAR
+X add_blogpost()
+X /posts
+X list_posts()-list all posts show only summary, id,published on
+X posts/id
+X get_post()-  get just one by id 
+X update_post()
+X delete_post()
+
+versiyon 2
+
+X add comments table- id, post_id,user_id, comment, published_on, updated_on
+
+FONKSIYONLAR
+/comments
+X post_comment()
+update_comment()
+X delete_comment()
+X read_comment()
+
+
+
+
+
+FOR JWT----------------------------------------------------------------------
+pip install flask PyJWT
+Set up Flask app and JWT configuration: Create a Flask application and configure JWT settings. Here's an example:
+
+python
+Copy code
+from flask import Flask, jsonify, request
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+
+app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'your-secret-key'  # Change this to a secure secret key
+jwt = JWTManager(app)
+
+# Dummy user database
+users = {
+    'john': 'password123',
+    'mary': 'letmein'
+}
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.json.get('username')
+    password = request.json.get('password')
+
+    if username in users and users[username] == password:
+        access_token = create_access_token(identity=username)
+        return jsonify({'access_token': access_token})
+
+    return jsonify({'message': 'Invalid username or password'}), 401
+
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected_route():
+current_user_id = get_jwt_identity()
+    return jsonify({'message': 'This route is protected!'})
+
+if __name__ == '__main__':
+    app.run(debug=True)
